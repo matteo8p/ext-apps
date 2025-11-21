@@ -7,7 +7,7 @@
 
 ## Abstract
 
-This SEP proposes an extension (per SEP-1724) to MCP that enables servers to deliver interactive user interfaces to hosts. MCP Apps introduces a standardized pattern for declaring UI resources via the `ui://` URI scheme, associating them with tools through metadata, and facilitating bidirectional communication between the UI and the host using MCP's JSON-RPC base protocol. This extension addresses the growing community need for rich, interactive experiences in MCP-enabled applications, maintaining security, auditability, and alignment with MCP's core architecture. The initial specification focuses on HTML resources (`text/vnd.mcp.ui+html`) with a clear path for future extensions.
+This SEP proposes an extension (per SEP-1724) to MCP that enables servers to deliver interactive user interfaces to hosts. MCP Apps introduces a standardized pattern for declaring UI resources via the `ui://` URI scheme, associating them with tools through metadata, and facilitating bidirectional communication between the UI and the host using MCP's JSON-RPC base protocol. This extension addresses the growing community need for rich, interactive experiences in MCP-enabled applications, maintaining security, auditability, and alignment with MCP's core architecture. The initial specification focuses on HTML resources (`text/html+mcp`) with a clear path for future extensions.
 
 ## Motivation
 
@@ -43,7 +43,7 @@ MCP Apps extends the Model Context Protocol to enable servers to deliver interac
 - **Bidirectional Communication:** UI iframes communicate with hosts using standard MCP JSON-RPC protocol
 - **Security Model:** Mandatory iframe sandboxing with auditable communication
 
-This specification focuses on HTML content (`text/vnd.mcp.ui+html`) as the initial content type, with extensibility for future formats.
+This specification focuses on HTML content (`text/html+mcp`) as the initial content type, with extensibility for future formats.
 
 As an extension, MCP Apps is optional and must be explicitly negotiated between clients and servers through the extension capabilities mechanism (see Capability Negotiation section).
 
@@ -56,7 +56,7 @@ interface UIResource {
   uri: string;           // MUST start with 'ui://'
   name: string;          // Human-readable identifier
   description?: string;  // Description of the UI resource
-  mimeType: string;      // SHOULD be 'text/vnd.mcp.ui+html' in MVP
+  mimeType: string;      // SHOULD be 'text/html+mcp' in MVP
   _meta?: UIResourceMeta // Resource Metadata
 }
 
@@ -77,7 +77,7 @@ The resource content is returned via `resources/read`:
 {
   contents: [{
     uri: string;                  // Matching UI resource URI
-    mimeType: "text/vnd.mcp.ui+html";  // MUST be "text/vnd.mcp.ui+html"
+    mimeType: "text/html+mcp";  // MUST be "text/html+mcp"
     text?: string;                // HTML content as string
     blob?: string;                // OR base64-encoded HTML
     _meta?: {
@@ -97,7 +97,7 @@ The resource content is returned via `resources/read`:
 #### Content Requirements:
 
 - URI MUST start with `ui://` scheme
-- `mimeType` MUST be `text/vnd.mcp.ui+html` (other types reserved for future extensions)
+- `mimeType` MUST be `text/html+mcp` (other types reserved for future extensions)
 - Content MUST be provided via either `text` (string) or `blob` (base64-encoded)
 - Content MUST be valid HTML5 document
 
@@ -156,14 +156,14 @@ Example:
   "uri": "ui://weather-server/dashboard-template",
   "name": "weather_dashboard",
   "description": "Interactive weather dashboard widget",
-  "mimeType": "text/vnd.mcp.ui+html"
+  "mimeType": "text/html+mcp"
 }
 
 // Resource content with metadata
 {
   "contents": [{
     "uri": "ui://weather-server/dashboard-template",
-    "mimeType": "text/vnd.mcp.ui+html",
+    "mimeType": "text/html+mcp",
     "text": "<!DOCTYPE html><html>...</html>",
     "_meta": {
       "ui" : {
@@ -828,7 +828,7 @@ Clients advertise MCP Apps support in the initialize request using the extension
     "capabilities": {
       "extensions": {
         "io.modelcontextprotocol/ui": {
-          "mimeTypes": ["text/vnd.mcp.ui+html"]
+          "mimeTypes": ["text/html+mcp"]
         }
       }
     },
@@ -842,7 +842,7 @@ Clients advertise MCP Apps support in the initialize request using the extension
 
 **Extension Settings:**
 
-- `mimeTypes`: Array of supported content types (REQUIRED, e.g., `["text/vnd.mcp.ui+html"]`)
+- `mimeTypes`: Array of supported content types (REQUIRED, e.g., `["text/html+mcp"]`)
 
 Future versions may add additional settings:
 
@@ -855,7 +855,7 @@ Servers SHOULD check client (host would-be) capabilities before registering UI-e
 
 ```typescript
 const hasUISupport =
-  clientCapabilities?.extensions?.["io.modelcontextprotocol/ui"]?.mimeTypes?.includes("text/vnd.mcp.ui+html");
+  clientCapabilities?.extensions?.["io.modelcontextprotocol/ui"]?.mimeTypes?.includes("text/html+mcp");
 
 if (hasUISupport) {
   // Register tools with UI templates
@@ -939,7 +939,7 @@ This proposal synthesizes feedback from the UI CWG and MCP-UI community, host im
 
 #### 3. Support Raw HTML Content Type
 
-**Decision:** MVP supports only `text/vnd.mcp.ui+html` (rawHtml), with other types explicitly deferred.
+**Decision:** MVP supports only `text/html+mcp` (rawHtml), with other types explicitly deferred.
 
 **Rationale:**
 
