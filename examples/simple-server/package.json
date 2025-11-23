@@ -11,7 +11,7 @@
     "start": "npm run build && npm run server"
   },
   "dependencies": {
-    "@modelcontextprotocol/ext-apps": "git+https://github.com/modelcontextprotocol/ext-apps.git",
+    "@modelcontextprotocol/ext-apps": "../..",
     "@modelcontextprotocol/sdk": "^1.20.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
