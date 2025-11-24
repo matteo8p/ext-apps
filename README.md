@@ -30,7 +30,7 @@ This repo provides:
 
 What this repo does NOT provide:
 
-- There's no *supported* host implementation in this repo (beyond the [examples/simple-host](./examples/simple-host) example)
+- There's no _supported_ host implementation in this repo (beyond the [examples/simple-host](./examples/simple-host) example)
   - We have [contributed a tentative implementation](https://github.com/MCP-UI-Org/mcp-ui/pull/147) of hosting / iframing / sandboxing logic to the [MCP-UI](https://github.com/idosal/mcp-ui) repository, and expect OSS clients may use it, while other clients might roll their own hosting logic.
 
 ## Using the SDK
@@ -70,8 +70,7 @@ Your `package.json` will then look like:
 }
 ```
 
-### Build tools in dependencies
-
-The build tools (`esbuild`, `tsx`, `typescript`) are in `dependencies` rather than `devDependencies`. This is intentional: it allows the `prepare` script to run when the package is installed from git, since npm doesn't install devDependencies for git dependencies.
-
-Once the package is published to npm with pre-built `dist/`, these can be moved back to `devDependencies`.
+> [!NOTE]  
+> The build tools (`esbuild`, `tsx`, `typescript`) are in `dependencies` rather than `devDependencies`. This is intentional: it allows the `prepare` script to run when the package is installed from git, since npm doesn't install devDependencies for git dependencies.
+>
+> Once the package is published to npm with pre-built `dist/`, these can be moved back to `devDependencies`.

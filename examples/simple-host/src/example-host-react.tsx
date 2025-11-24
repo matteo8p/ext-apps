@@ -5,7 +5,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { Tool } from "@modelcontextprotocol/sdk/types.js";
-import { AppRenderer,AppRendererProps } from "../src/AppRenderer";
+import { AppRenderer, AppRendererProps } from "../src/AppRenderer";
 import { AppBridge } from "../../../dist/src/app-bridge";
 
 const SANDBOX_PROXY_URL = URL.parse("/sandbox.html", location.href)!;
@@ -94,16 +94,24 @@ function ExampleApp() {
     setActiveTools((prev) => prev.filter((t) => t.id !== id));
   };
 
-  const handleMessage: AppRendererProps["onmessage"] = async (params, _extra) => {
+  const handleMessage: AppRendererProps["onmessage"] = async (
+    params,
+    _extra,
+  ) => {
     console.log("[React Host] Message:", params);
     return {};
   };
 
-  const handleLoggingMessage: AppRendererProps["onloggingmessage"] = (params) => {
+  const handleLoggingMessage: AppRendererProps["onloggingmessage"] = (
+    params,
+  ) => {
     console.log("[React Host] Logging message:", params);
   };
 
-  const handleOpenLink: AppRendererProps["onopenlink"] = async (params, _extra) => {
+  const handleOpenLink: AppRendererProps["onopenlink"] = async (
+    params,
+    _extra,
+  ) => {
     console.log("[React Host] Open link request:", params);
     window.open(params.url, "_blank", "noopener,noreferrer");
     return { isError: false };

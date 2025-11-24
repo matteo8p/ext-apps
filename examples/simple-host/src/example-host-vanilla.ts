@@ -87,15 +87,15 @@ window.addEventListener("load", async () => {
         appBridge.sendToolInput({ arguments: toolInput });
       };
 
-      appBridge.onopenlink = async ({url}) => {
+      appBridge.onopenlink = async ({ url }) => {
         console.log("[Example] Open link requested:", url);
         window.open(url, "_blank", "noopener,noreferrer");
-        return {isError: false};
+        return { isError: false };
       };
 
       appBridge.onmessage = async (params) => {
         console.log("[Example] Message requested:", params);
-        return {isError: false};
+        return { isError: false };
       };
 
       // Handle size changes by resizing the iframe
@@ -108,7 +108,7 @@ window.addEventListener("load", async () => {
         }
       };
 
-      appBridge.onloggingmessage = async params => {
+      appBridge.onloggingmessage = async (params) => {
         console.log("[Tool UI Log]", params);
       };
 

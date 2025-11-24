@@ -95,9 +95,7 @@ export interface AppRendererProps {
  * @param props - Component props
  * @returns React element containing the sandboxed tool UI iframe
  */
-export const AppRenderer = (
-  props: AppRendererProps,
-) => {
+export const AppRenderer = (props: AppRendererProps) => {
   const {
     client,
     sandboxProxyUrl,
