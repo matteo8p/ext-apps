@@ -36,28 +36,17 @@ window.addEventListener("load", async () => {
     version: "1.0.0",
   });
 
-  app.setNotificationHandler(
-    McpUiToolInputNotificationSchema,
-    async ({ params }) => {
-      appendText(
-        `Tool call input received: ${JSON.stringify(params.arguments)}`,
-      );
-    },
-  );
-  app.setNotificationHandler(
-    McpUiToolResultNotificationSchema,
-    async ({ params: { content, structuredContent, isError } }) => {
-      appendText(
-        `Tool call result received: isError=${isError}, content=${content}, structuredContent=${JSON.stringify(structuredContent)}`,
-      );
-    },
-  );
-  app.setNotificationHandler(
-    McpUiHostContextChangedNotificationSchema,
-    async (params) => {
-      appendText(`Host context changed: ${JSON.stringify(params)}`);
-    },
-  );
+  app.ontoolinput = (params) => {
+    appendText(`Tool call input received: ${JSON.stringify(params.arguments)}`);
+  };
+  app.ontoolresult = ({ content, structuredContent, isError }) => {
+    appendText(
+      `Tool call result received: isError=${isError}, content=${content}, structuredContent=${JSON.stringify(structuredContent)}`,
+    );
+  };
+  app.onhostcontextchanged = (params) => {
+    appendText(`Host context changed: ${JSON.stringify(params)}`);
+  };
 
   document.body.addEventListener("resize", () => {
     app.sendSizeChange({

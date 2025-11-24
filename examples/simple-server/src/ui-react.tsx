@@ -26,19 +26,9 @@ export function McpClientApp() {
     appInfo: APP_INFO,
     capabilities: {},
     onAppCreated: (app) => {
-      app.setNotificationHandler(
-        McpUiToolResultNotificationSchema,
-        async (notification) => {
-          setToolResults((prev) => [...prev, notification.params]);
-        },
-      );
-      app.setNotificationHandler(
-        McpUiSizeChangeNotificationSchema,
-        async (notification) => {
-          document.body.style.width = `${notification.params.width}px`;
-          document.body.style.height = `${notification.params.height}px`;
-        },
-      );
+      app.ontoolresult = async (params) => {
+        setToolResults((prev) => [...prev, params]);
+      };
     },
   });
 

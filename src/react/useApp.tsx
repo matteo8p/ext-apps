@@ -9,8 +9,7 @@ export interface UseAppOptions {
   capabilities: McpUiAppCapabilities;
   /**
    * Called after client is created but before connection.
-   * Use this to register request/notification handlers via
-   * client.setRequestHandler() and client.setNotificationHandler().
+   * Use this to register handlers via app.ontoolinput, app.toolresult, etc.
    */
   onAppCreated?: (app: App) => void;
 }

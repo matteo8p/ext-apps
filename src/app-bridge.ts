@@ -13,6 +13,7 @@ import {
   ListResourceTemplatesRequestSchema,
   ListResourceTemplatesResultSchema,
   Notification,
+  PingRequest,
   PingRequestSchema,
   PromptListChangedNotificationSchema,
   ResourceListChangedNotificationSchema,
@@ -34,12 +35,16 @@ import {
   LATEST_PROTOCOL_VERSION,
   McpUiAppCapabilities,
   McpUiHostCapabilities,
+  McpUiInitializedNotification,
   McpUiInitializedNotificationSchema,
   McpUiInitializeRequest,
   McpUiInitializeRequestSchema,
   McpUiInitializeResult,
   McpUiResourceTeardownRequest,
   McpUiResourceTeardownResultSchema,
+  McpUiSandboxProxyReadyNotification,
+  McpUiSandboxProxyReadyNotificationSchema,
+  McpUiSizeChangeNotificationSchema,
 } from "./types";
 export * from "./types";
 export { PostMessageTransport } from "./message-transport";
@@ -48,9 +53,11 @@ type HostOptions = ProtocolOptions;
 
 export const SUPPORTED_PROTOCOL_VERSIONS = [LATEST_PROTOCOL_VERSION];
 
-export class AppBridge extends Protocol<Request, Notification, Result> {
-  oninitialized?: () => void;
+type RequestExtra = Parameters<
+  Parameters<AppBridge["setRequestHandler"]>[1]
+>[1];
 
+export class AppBridge extends Protocol<Request, Notification, Result> {
   private _appCapabilities?: McpUiAppCapabilities;
 
   constructor(
@@ -64,14 +71,35 @@ export class AppBridge extends Protocol<Request, Notification, Result> {
     this.setRequestHandler(McpUiInitializeRequestSchema, (request) =>
       this._oninitialize(request),
     );
-    this.setNotificationHandler(McpUiInitializedNotificationSchema, () =>
-      this.oninitialized?.(),
-    );
 
-    this.setRequestHandler(PingRequestSchema, (request) => {
-      console.log("Received ping:", request.params);
+    this.setRequestHandler(PingRequestSchema, (request, extra) => {
+      this.onping?.(request.params, extra);
       return {};
     });
+  }
+
+  onping?: (params: PingRequest["params"], extra: RequestExtra) => void;
+
+  set onsizechange(
+    callback: (params: McpUiSizeChangeNotification["params"]) => void,
+  ) {
+    this.setNotificationHandler(McpUiSizeChangeNotificationSchema, (n) =>
+      callback(n.params),
+    );
+  }
+  set onsandboxready(
+    callback: (params: McpUiSandboxProxyReadyNotification["params"]) => void,
+  ) {
+    this.setNotificationHandler(McpUiSandboxProxyReadyNotificationSchema, (n) =>
+      callback(n.params),
+    );
+  }
+  set oninitialized(
+    callback: (params: McpUiInitializedNotification["params"]) => void,
+  ) {
+    this.setNotificationHandler(McpUiInitializedNotificationSchema, (n) =>
+      callback(n.params),
+    );
   }
 
   assertCapabilityForMethod(method: Request["method"]): void {

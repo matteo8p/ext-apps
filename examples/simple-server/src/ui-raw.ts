@@ -8,7 +8,7 @@
  * <code>
  * npx esbuild src/ui-raw.ts --bundle --outfile=dist/ui-raw.js --minify --sourcemap --platform=browser
  * </code>
- * 
+ *
  * We implement a barebones JSON-RPC message sender/receiver (see `app` object below),
  * but without timeouts or runtime type validation of any kind
  * (for that, use the Apps SDK / see ui-vanilla.ts or ui-react.ts).

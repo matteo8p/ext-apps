@@ -19,6 +19,8 @@ import {
   LATEST_PROTOCOL_VERSION,
   McpUiAppCapabilities,
   McpUiHostCapabilities,
+  McpUiHostContextChangedNotification,
+  McpUiHostContextChangedNotificationSchema,
   McpUiInitializedNotification,
   McpUiInitializeRequest,
   McpUiInitializeResultSchema,
@@ -27,6 +29,12 @@ import {
   McpUiOpenLinkRequest,
   McpUiOpenLinkResultSchema,
   McpUiSizeChangeNotification,
+  McpUiToolInputNotification,
+  McpUiToolInputNotificationSchema,
+  McpUiToolInputPartialNotification,
+  McpUiToolInputPartialNotificationSchema,
+  McpUiToolResultNotification,
+  McpUiToolResultNotificationSchema,
 } from "./types";
 import { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 
@@ -52,6 +60,36 @@ export class App extends Protocol<Request, Notification, Result> {
       console.log("Received ping:", request.params);
       return {};
     });
+  }
+
+  set ontoolinput(
+    callback: (params: McpUiToolInputNotification["params"]) => void,
+  ) {
+    this.setNotificationHandler(McpUiToolInputNotificationSchema, (n) =>
+      callback(n.params),
+    );
+  }
+  set ontoolinputpartial(
+    callback: (params: McpUiToolInputPartialNotification["params"]) => void,
+  ) {
+    this.setNotificationHandler(McpUiToolInputPartialNotificationSchema, (n) =>
+      callback(n.params),
+    );
+  }
+  set ontoolresult(
+    callback: (params: McpUiToolResultNotification["params"]) => void,
+  ) {
+    this.setNotificationHandler(McpUiToolResultNotificationSchema, (n) =>
+      callback(n.params),
+    );
+  }
+  set onhostcontextchanged(
+    callback: (params: McpUiHostContextChangedNotification["params"]) => void,
+  ) {
+    this.setNotificationHandler(
+      McpUiHostContextChangedNotificationSchema,
+      (n) => callback(n.params),
+    );
   }
 
   assertCapabilityForMethod(method: Request["method"]): void {
