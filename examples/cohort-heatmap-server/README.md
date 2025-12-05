@@ -2,6 +2,14 @@
 
 A demo MCP App that displays cohort retention data as an interactive heatmap, showing customer retention over time by signup month.
 
+<table>
+  <tr>
+    <td><a href="https://modelcontextprotocol.github.io/ext-apps/screenshots/cohort-heatmap-server/01-initial-view.png"><img src="https://modelcontextprotocol.github.io/ext-apps/screenshots/cohort-heatmap-server/01-initial-view.png" alt="Initial view" width="100%"></a></td>
+    <td><a href="https://modelcontextprotocol.github.io/ext-apps/screenshots/cohort-heatmap-server/02-hover-state.png"><img src="https://modelcontextprotocol.github.io/ext-apps/screenshots/cohort-heatmap-server/02-hover-state.png" alt="Hover state" width="100%"></a></td>
+    <td><a href="https://modelcontextprotocol.github.io/ext-apps/screenshots/cohort-heatmap-server/03-low-retention-hover.png"><img src="https://modelcontextprotocol.github.io/ext-apps/screenshots/cohort-heatmap-server/03-low-retention-hover.png" alt="Low retention hover" width="100%"></a></td>
+  </tr>
+</table>
+
 ## Features
 
 - **Cohort Retention Heatmap**: Color-coded grid showing retention percentages across cohorts and time periods
