@@ -13,6 +13,7 @@ const SERVERS = [
   { name: "Customer Segmentation", port: 3105 },
   { name: "Scenario Modeler", port: 3106 },
   { name: "System Monitor", port: 3107 },
+  { name: "Three.js", port: 3109 },
 ] as const;
 
 function serverUrl(port: number): string {
