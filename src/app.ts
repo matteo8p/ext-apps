@@ -31,7 +31,12 @@ import {
   McpUiMessageResultSchema,
   McpUiOpenLinkRequest,
   McpUiOpenLinkResultSchema,
+  McpUiResourceTeardownRequest,
+  McpUiResourceTeardownRequestSchema,
+  McpUiResourceTeardownResult,
   McpUiSizeChangedNotification,
+  McpUiToolCancelledNotification,
+  McpUiToolCancelledNotificationSchema,
   McpUiToolInputNotification,
   McpUiToolInputNotificationSchema,
   McpUiToolInputPartialNotification,
@@ -389,6 +394,41 @@ export class App extends Protocol<Request, Notification, Result> {
   }
 
   /**
+   * Convenience handler for receiving tool cancellation notifications from the host.
+   *
+   * Set this property to register a handler that will be called when the host
+   * notifies that tool execution was cancelled. This can occur for various reasons
+   * including user action, sampling error, classifier intervention, or other
+   * interruptions. Apps should update their state and display appropriate feedback.
+   *
+   * This setter is a convenience wrapper around `setNotificationHandler()` that
+   * automatically handles the notification schema and extracts the params for you.
+   *
+   * Register handlers before calling {@link connect} to avoid missing notifications.
+   *
+   * @param callback - Function called when tool execution is cancelled
+   *
+   * @example Handle tool cancellation
+   * ```typescript
+   * app.ontoolcancelled = (params) => {
+   *   console.log("Tool cancelled:", params.reason);
+   *   showCancelledMessage(params.reason ?? "Operation was cancelled");
+   * };
+   * ```
+   *
+   * @see {@link setNotificationHandler} for the underlying method
+   * @see {@link McpUiToolCancelledNotification} for the notification structure
+   * @see {@link ontoolresult} for successful tool completion
+   */
+  set ontoolcancelled(
+    callback: (params: McpUiToolCancelledNotification["params"]) => void,
+  ) {
+    this.setNotificationHandler(McpUiToolCancelledNotificationSchema, (n) =>
+      callback(n.params),
+    );
+  }
+
+  /**
    * Convenience handler for host context changes (theme, viewport, locale, etc.).
    *
    * Set this property to register a handler that will be called when the host's
@@ -424,6 +464,48 @@ export class App extends Protocol<Request, Notification, Result> {
     this.setNotificationHandler(
       McpUiHostContextChangedNotificationSchema,
       (n) => callback(n.params),
+    );
+  }
+
+  /**
+   * Convenience handler for graceful shutdown requests from the host.
+   *
+   * Set this property to register a handler that will be called when the host
+   * requests the app to prepare for teardown. This allows the app to perform
+   * cleanup operations (save state, close connections, etc.) before being unmounted.
+   *
+   * The handler can be sync or async. The host will wait for the returned promise
+   * to resolve before proceeding with teardown.
+   *
+   * This setter is a convenience wrapper around `setRequestHandler()` that
+   * automatically handles the request schema.
+   *
+   * Register handlers before calling {@link connect} to avoid missing requests.
+   *
+   * @param callback - Function called when teardown is requested.
+   *   Can return void or a Promise that resolves when cleanup is complete.
+   *
+   * @example Perform cleanup before teardown
+   * ```typescript
+   * app.onteardown = async () => {
+   *   await saveState();
+   *   closeConnections();
+   *   console.log("App ready for teardown");
+   * };
+   * ```
+   *
+   * @see {@link setRequestHandler} for the underlying method
+   * @see {@link McpUiResourceTeardownRequest} for the request structure
+   */
+  set onteardown(
+    callback: (
+      params: McpUiResourceTeardownRequest["params"],
+      extra: RequestHandlerExtra,
+    ) => McpUiResourceTeardownResult | Promise<McpUiResourceTeardownResult>,
+  ) {
+    this.setRequestHandler(
+      McpUiResourceTeardownRequestSchema,
+      (request, extra) => callback(request.params, extra),
     );
   }
 
@@ -533,6 +615,7 @@ export class App extends Protocol<Request, Notification, Result> {
         }
         return;
       case "ping":
+      case "ui/resource-teardown":
         return;
       default:
         throw new Error(`No handler for method ${method} registered`);

@@ -140,6 +140,36 @@ describe("App <-> AppBridge integration", () => {
       });
     });
 
+    it("sendToolCancelled triggers app.ontoolcancelled", async () => {
+      const receivedCancellations: unknown[] = [];
+      app.ontoolcancelled = (params) => {
+        receivedCancellations.push(params);
+      };
+
+      await app.connect(appTransport);
+      await bridge.sendToolCancelled({
+        reason: "User cancelled the operation",
+      });
+
+      expect(receivedCancellations).toHaveLength(1);
+      expect(receivedCancellations[0]).toEqual({
+        reason: "User cancelled the operation",
+      });
+    });
+
+    it("sendToolCancelled works without reason", async () => {
+      const receivedCancellations: unknown[] = [];
+      app.ontoolcancelled = (params) => {
+        receivedCancellations.push(params);
+      };
+
+      await app.connect(appTransport);
+      await bridge.sendToolCancelled({});
+
+      expect(receivedCancellations).toHaveLength(1);
+      expect(receivedCancellations[0]).toEqual({});
+    });
+
     it("setHostContext triggers app.onhostcontextchanged", async () => {
       const receivedContexts: unknown[] = [];
       app.onhostcontextchanged = (params) => {
@@ -172,6 +202,34 @@ describe("App <-> AppBridge integration", () => {
         { theme: "dark", locale: "en-US" },
         { theme: "light" },
       ]);
+    });
+
+    it("sendResourceTeardown triggers app.onteardown", async () => {
+      let teardownCalled = false;
+      app.onteardown = async () => {
+        teardownCalled = true;
+        return {};
+      };
+
+      await app.connect(appTransport);
+      await bridge.sendResourceTeardown({});
+
+      expect(teardownCalled).toBe(true);
+    });
+
+    it("sendResourceTeardown waits for async cleanup", async () => {
+      const cleanupSteps: string[] = [];
+      app.onteardown = async () => {
+        cleanupSteps.push("start");
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        cleanupSteps.push("done");
+        return {};
+      };
+
+      await app.connect(appTransport);
+      await bridge.sendResourceTeardown({});
+
+      expect(cleanupSteps).toEqual(["start", "done"]);
     });
   });
 
