@@ -154,11 +154,12 @@ interface UIResourceMeta {
   /**
    * Visual boundary preference
    *
-   * Boolean indicating the UI prefers a visible border. Useful for widgets
-   * that might blend with host background.
+   * Boolean controlling whether a visible border and background is provided by the host. Specifying an
+   * explicit value for this is recommended because hosts' defaults may vary.
    *
-   * - `true`: Request visible border (host decides styling)
-   * - `false` or omitted: No preference
+   * - `true`: Request visible border + background
+   * - `false`: Request no visible border + background
+   * - omitted: host decides border
    */
   prefersBorder?: boolean,
 }
@@ -391,9 +392,8 @@ UI iframes can use the following subset of standard MCP protocol messages:
 
 ### Host Context in `McpUiInitializeResult`
 
-When the Guest UI sends an `ui/initialize` request to the Host, the Host SHOULD include UI-specific context in the `McpUiInitializeResult`’s `hostContext` field:
+When the Guest UI sends an `ui/initialize` request to the Host, the Host SHOULD include UI-specific context in the `McpUiInitializeResult`'s `hostContext` field:
 
-```typescript
 interface HostContext {
   /** Metadata of the tool call that instantiated the App */
   toolInfo?: {
@@ -405,7 +405,7 @@ interface HostContext {
   /** Current color theme preference */
   theme?: "light" | "dark";
   /** CSS variables for theming. See Theming section for standardized variable names. */
-  styles?: Record<string, string>;
+  styles?: Record<McpUiStyleVariableKey, string | undefined>;
   /** How the UI is currently displayed */
   displayMode?: "inline" | "fullscreen" | "pip";
   /** Display modes the host supports */
@@ -472,32 +472,72 @@ Hosts can optionally pass CSS custom properties via `HostContext.styles` for vis
 
 #### Current Standardized Variables
 
-| Category | Variables |
-|----------|-----------|
-| Background | `--color-background-primary`, `--color-background-secondary`, `--color-background-tertiary`, `--color-background-inverted` |
-| Text | `--color-text-primary`, `--color-text-secondary`, `--color-text-tertiary`, `--color-text-inverted` |
-| Icons | `--color-icon-primary`, `--color-icon-secondary`, `--color-icon-tertiary`, `--color-icon-inverted` |
-| Borders | `--color-border-primary`, `--color-border-secondary` |
-| Accents | `--color-accent-info`, `--color-accent-danger`, `--color-accent-success`, `--color-accent-warning` |
-| Font Family | `--font-family-sans` |
-| Font Sizes | `--font-size-heading`, `--font-size-body`, `--font-size-caption` |
-| Font Weights | `--font-weight-regular`, `--font-weight-emphasized` |
-| Line Heights | `--font-leading-regular`, `--font-leading-tight` |
-| Composite Styles | `--font-style-heading`, `--font-style-body`, `--font-style-body-emphasized`, `--font-style-caption`, `--font-style-caption-emphasized` |
-| Border Radius | `--border-radius-small`, `--border-radius-medium`, `--border-radius-large`, `--border-radius-full` |
-| Border Width | `--border-width-regular` |
+```typescript
+/** CSS variable keys available to MCP apps for theming. */
+type McpUiStyleVariableKey =
+  // Background colors
+  | "--color-background-primary"
+  | "--color-background-secondary"
+  | "--color-background-tertiary"
+  | "--color-background-inverted"
+  // Text colors
+  | "--color-text-primary"
+  | "--color-text-secondary"
+  | "--color-text-tertiary"
+  | "--color-text-inverted"
+  // Icon colors
+  | "--color-icon-primary"
+  | "--color-icon-secondary"
+  | "--color-icon-tertiary"
+  | "--color-icon-inverted"
+  // Border colors
+  | "--color-border-primary"
+  | "--color-border-secondary"
+  // Accent colors
+  | "--color-accent-info"
+  | "--color-accent-danger"
+  | "--color-accent-success"
+  | "--color-accent-warning"
+  // Typography - Family
+  | "--font-family-sans"
+  // Typography - Size
+  | "--font-size-heading"
+  | "--font-size-body"
+  | "--font-size-caption"
+  // Typography - Weight
+  | "--font-weight-regular"
+  | "--font-weight-emphasized"
+  // Typography - Line height
+  | "--font-leading-regular"
+  | "--font-leading-tight"
+  // Typography - Composite styles
+  | "--font-style-heading"
+  | "--font-style-body"
+  | "--font-style-body-emphasized"
+  | "--font-style-caption"
+  | "--font-style-caption-emphasized"
+  // Border radius
+  | "--border-radius-small"
+  | "--border-radius-medium"
+  | "--border-radius-large"
+  | "--border-radius-full"
+  // Border width
+  | "--border-width-regular";
 
 #### Host Behavior
 
-- Hosts can provide any subset of standardized variables, or not pass `styles` at all. However, passing all of the standardized properties is recommended for cohesiveness
-- Hosts can use the CSS `light-dark()` function for theme-aware values
+- Hosts can provide any subset of standardized variables, or not pass `styles` at all
+  - However, unexpected clashes may occur if hosts pass some color variables but not others for example, since apps are instructed to fallback on their own default values for unspecified style variables
+- Hosts should use the CSS `light-dark()` function for theme-aware values (i.e. light mode and dark mode colors)
 
 #### App Behavior
 
-- Apps should set default fallback values for CSS variables, to account for hosts who don't pass some or all style variables. This ensures graceful degradation when hosts omit `styles` or specific variables:
+- Apps should set default fallback values for the set of these variables that they use, to account for hosts who don't pass some or all style variables. This ensures graceful degradation when hosts omit `styles` or specific variables:
 ```
 :root {
-  --colorTextPrimary: #171717;
+  --color-text-primary: light-dark(#171717, #000000);
+  --border-radius-small: 8px;
+  ...
 }
 ```
 - Apps can use the `applyHostStyles` utility (or `useHostStyles` if they prefer a React hook) to easily populate the host-provided CSS variables into their style sheet

@@ -1,7 +1,12 @@
 /**
  * @file Customer Segmentation Explorer - interactive scatter/bubble visualization
  */
-import { App, PostMessageTransport } from "@modelcontextprotocol/ext-apps";
+import {
+  App,
+  PostMessageTransport,
+  applyHostStyles,
+  applyDocumentTheme,
+} from "@modelcontextprotocol/ext-apps";
 import { Chart, registerables } from "chart.js";
 import "./global.css";
 import "./mcp-app.css";
@@ -138,11 +143,40 @@ function buildDatasets(): Chart["data"]["datasets"] {
   });
 }
 
+// Hidden element for resolving CSS color values (reused to avoid DOM thrashing)
+let colorResolver: HTMLDivElement | null = null;
+
+// Resolve a CSS color value (handles light-dark() function)
+function resolveColor(cssValue: string, fallback: string): string {
+  if (!cssValue) return fallback;
+  // If it's a simple color value, return it directly
+  if (!cssValue.includes("light-dark(")) return cssValue;
+  // Create resolver element once and keep it hidden
+  if (!colorResolver) {
+    colorResolver = document.createElement("div");
+    colorResolver.style.position = "absolute";
+    colorResolver.style.visibility = "hidden";
+    colorResolver.style.pointerEvents = "none";
+    document.body.appendChild(colorResolver);
+  }
+  colorResolver.style.color = cssValue;
+  return getComputedStyle(colorResolver).color || fallback;
+}
+
+// Get colors from CSS variables
+function getChartColors(): { textColor: string; gridColor: string } {
+  const style = getComputedStyle(document.documentElement);
+  const rawTextColor = style.getPropertyValue("--color-text-secondary").trim();
+  const rawGridColor = style.getPropertyValue("--color-border-primary").trim();
+  return {
+    textColor: resolveColor(rawTextColor, "#6b7280"),
+    gridColor: resolveColor(rawGridColor, "#e5e7eb"),
+  };
+}
+
 // Initialize Chart.js
 function initChart(): Chart {
-  const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const textColor = isDarkMode ? "#9ca3af" : "#6b7280";
-  const gridColor = isDarkMode ? "#374151" : "#e5e7eb";
+  const { textColor, gridColor } = getChartColors();
 
   return new Chart(chartCanvas, {
     type: "bubble",
@@ -243,8 +277,7 @@ function initChart(): Chart {
 function updateChart(): void {
   if (!state.chart) return;
 
-  const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const textColor = isDarkMode ? "#9ca3af" : "#6b7280";
+  const { textColor, gridColor } = getChartColors();
 
   state.chart.data.datasets = buildDatasets();
 
@@ -252,11 +285,13 @@ function updateChart(): void {
   const scales = state.chart.options.scales as {
     x: {
       title: { text: string; color: string };
-      ticks: { callback: (value: number) => string };
+      ticks: { color: string; callback: (value: number) => string };
+      grid: { color: string };
     };
     y: {
       title: { text: string; color: string };
-      ticks: { callback: (value: number) => string };
+      ticks: { color: string; callback: (value: number) => string };
+      grid: { color: string };
     };
   };
 
@@ -264,8 +299,12 @@ function updateChart(): void {
   scales.y.title.text = METRIC_LABELS[state.yAxis];
   scales.x.title.color = textColor;
   scales.y.title.color = textColor;
+  scales.x.ticks.color = textColor;
+  scales.y.ticks.color = textColor;
   scales.x.ticks.callback = (value: number) => formatValue(value, state.xAxis);
   scales.y.ticks.callback = (value: number) => formatValue(value, state.yAxis);
+  scales.x.grid.color = gridColor;
+  scales.y.grid.color = gridColor;
 
   state.chart.update();
 }
@@ -388,20 +427,52 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// Handle theme changes
+// Handle system theme changes (fallback when host doesn't provide styles)
 window
   .matchMedia("(prefers-color-scheme: dark)")
-  .addEventListener("change", () => {
-    if (state.chart) {
-      state.chart.destroy();
-      state.chart = initChart();
+  .addEventListener("change", (e) => {
+    // Only apply if we haven't received host theme
+    if (!app.getHostContext()?.theme) {
+      applyDocumentTheme(e.matches ? "dark" : "light");
+      if (state.chart) {
+        state.chart.destroy();
+        state.chart = initChart();
+      }
     }
   });
+
+// Apply initial theme based on system preference (before host context is available)
+const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+applyDocumentTheme(systemDark ? "dark" : "light");
 
 // Register handlers and connect
 app.onerror = log.error;
 
-app.connect(new PostMessageTransport(window.parent));
+// Handle host context changes (theme and styles from host)
+app.onhostcontextchanged = (params) => {
+  if (params.theme) {
+    applyDocumentTheme(params.theme);
+  }
+  if (params.styles) {
+    applyHostStyles(params.styles);
+  }
+  // Recreate chart to pick up new colors
+  if (state.chart && (params.theme || params.styles)) {
+    state.chart.destroy();
+    state.chart = initChart();
+  }
+};
+
+app.connect(new PostMessageTransport(window.parent)).then(() => {
+  // Apply initial host context after connection
+  const ctx = app.getHostContext();
+  if (ctx?.theme) {
+    applyDocumentTheme(ctx.theme);
+  }
+  if (ctx?.styles) {
+    applyHostStyles(ctx.styles);
+  }
+});
 
 // Fetch data after connection
 setTimeout(fetchData, 100);
