@@ -394,6 +394,7 @@ UI iframes can use the following subset of standard MCP protocol messages:
 
 When the Guest UI sends an `ui/initialize` request to the Host, the Host SHOULD include UI-specific context in the `McpUiInitializeResult`'s `hostContext` field:
 
+```typescript
 interface HostContext {
   /** Metadata of the tool call that instantiated the App */
   toolInfo?: {
