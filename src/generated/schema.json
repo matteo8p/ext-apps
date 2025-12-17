@@ -352,6 +352,10 @@
                       },
                       {
                         "type": "string",
+                        "const": "--color-text-ghost"
+                      },
+                      {
+                        "type": "string",
                         "const": "--color-border-primary"
                       },
                       {
@@ -963,6 +967,10 @@
                   },
                   {
                     "type": "string",
+                    "const": "--color-text-ghost"
+                  },
+                  {
+                    "type": "string",
                     "const": "--color-border-primary"
                   },
                   {
@@ -1404,6 +1412,10 @@
               {
                 "type": "string",
                 "const": "--color-text-disabled"
+              },
+              {
+                "type": "string",
+                "const": "--color-text-ghost"
               },
               {
                 "type": "string",
@@ -2078,6 +2090,10 @@
                       {
                         "type": "string",
                         "const": "--color-text-disabled"
+                      },
+                      {
+                        "type": "string",
+                        "const": "--color-text-ghost"
                       },
                       {
                         "type": "string",
@@ -3161,6 +3177,10 @@
         },
         {
           "type": "string",
+          "const": "--color-text-ghost"
+        },
+        {
+          "type": "string",
           "const": "--color-border-primary"
         },
         {
@@ -3467,6 +3487,10 @@
           {
             "type": "string",
             "const": "--color-text-disabled"
+          },
+          {
+            "type": "string",
+            "const": "--color-text-ghost"
           },
           {
             "type": "string",
