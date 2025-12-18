@@ -324,18 +324,17 @@ export interface McpUiHostContext {
   displayMode?: McpUiDisplayMode;
   /** @description Display modes the host supports. */
   availableDisplayModes?: string[];
-  /**
-   * @description Viewport dimensions available to the UI.
-   *
-   * The viewport has two independent dimension pairs:
-   * - Height: Either `height` (fixed) or `maxHeight` (flexible), never both
-   * - Width: Either `width` (fixed) or `maxWidth` (flexible), never both
-   *
-   * Fixed dimensions (height/width): The host controls the size. Set height: 100% (recommended) or use the pixel value directly.
-   * Flexible dimensions (maxHeight/maxWidth or undefined): The app controls the size, up to the max if specified. If undefined, there is no limit.
-   */
-  viewport?: ({ height: number } | { maxHeight?: number }) &
-    ({ width: number } | { maxWidth?: number });
+  /** @description Current and maximum dimensions available to the UI. */
+  viewport?: {
+    /** @description Current viewport width in pixels. */
+    width: number;
+    /** @description Current viewport height in pixels. */
+    height: number;
+    /** @description Maximum available height in pixels (if constrained). */
+    maxHeight?: number;
+    /** @description Maximum available width in pixels (if constrained). */
+    maxWidth?: number;
+  };
   /** @description User's language and region preference in BCP 47 format. */
   locale?: string;
   /** @description User's timezone in IANA format. */

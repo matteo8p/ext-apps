@@ -562,39 +562,26 @@ export const McpUiHostContextSchema = z.looseObject({
     .array(z.string())
     .optional()
     .describe("Display modes the host supports."),
-  /**
-   * @description Viewport dimensions available to the UI.
-   *
-   * The viewport has two independent dimension pairs:
-   * - Height: Either `height` (fixed) or `maxHeight` (flexible), never both
-   * - Width: Either `width` (fixed) or `maxWidth` (flexible), never both
-   *
-   * Fixed dimensions (height/width): The host controls the size. Set height: 100% (recommended) or use the pixel value directly.
-   * Flexible dimensions (maxHeight/maxWidth or undefined): The app controls the size, up to the max if specified. If undefined, there is no limit.
-   */
+  /** @description Current and maximum dimensions available to the UI. */
   viewport: z
-    .union([
-      z.object({
-        height: z.number(),
-      }),
-      z.object({
-        maxHeight: z.number().optional(),
-      }),
-    ])
-    .and(
-      z.union([
-        z.object({
-          width: z.number(),
-        }),
-        z.object({
-          maxWidth: z.number().optional(),
-        }),
-      ]),
-    )
+    .object({
+      /** @description Current viewport width in pixels. */
+      width: z.number().describe("Current viewport width in pixels."),
+      /** @description Current viewport height in pixels. */
+      height: z.number().describe("Current viewport height in pixels."),
+      /** @description Maximum available height in pixels (if constrained). */
+      maxHeight: z
+        .number()
+        .optional()
+        .describe("Maximum available height in pixels (if constrained)."),
+      /** @description Maximum available width in pixels (if constrained). */
+      maxWidth: z
+        .number()
+        .optional()
+        .describe("Maximum available width in pixels (if constrained)."),
+    })
     .optional()
-    .describe(
-      "Viewport dimensions available to the UI.\n\nThe viewport has two independent dimension pairs:\n- Height: Either `height` (fixed) or `maxHeight` (flexible), never both\n- Width: Either `width` (fixed) or `maxWidth` (flexible), never both\n\nFixed dimensions (height/width): The host controls the size. Set height: 100% (recommended) or use the pixel value directly.\nFlexible dimensions (maxHeight/maxWidth or undefined): The app controls the size, up to the max if specified. If undefined, there is no limit.",
-    ),
+    .describe("Current and maximum dimensions available to the UI."),
   /** @description User's language and region preference in BCP 47 format. */
   locale: z
     .string()

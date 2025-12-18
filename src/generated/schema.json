@@ -629,55 +629,28 @@
               }
             },
             "viewport": {
-              "description": "Viewport dimensions available to the UI.\n\nThe viewport has two independent dimension pairs:\n- Height: Either `height` (fixed) or `maxHeight` (flexible), never both\n- Width: Either `width` (fixed) or `maxWidth` (flexible), never both\n\nFixed dimensions (height/width): The host controls the size. Set height: 100% (recommended) or use the pixel value directly.\nFlexible dimensions (maxHeight/maxWidth or undefined): The app controls the size, up to the max if specified. If undefined, there is no limit.",
-              "allOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "height": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["height"],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "maxHeight": {
-                          "type": "number"
-                        }
-                      },
-                      "additionalProperties": false
-                    }
-                  ]
+              "description": "Current and maximum dimensions available to the UI.",
+              "type": "object",
+              "properties": {
+                "width": {
+                  "description": "Current viewport width in pixels.",
+                  "type": "number"
                 },
-                {
-                  "anyOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "width": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["width"],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "maxWidth": {
-                          "type": "number"
-                        }
-                      },
-                      "additionalProperties": false
-                    }
-                  ]
+                "height": {
+                  "description": "Current viewport height in pixels.",
+                  "type": "number"
+                },
+                "maxHeight": {
+                  "description": "Maximum available height in pixels (if constrained).",
+                  "type": "number"
+                },
+                "maxWidth": {
+                  "description": "Maximum available width in pixels (if constrained).",
+                  "type": "number"
                 }
-              ]
+              },
+              "required": ["width", "height"],
+              "additionalProperties": false
             },
             "locale": {
               "description": "User's language and region preference in BCP 47 format.",
@@ -1282,55 +1255,28 @@
           }
         },
         "viewport": {
-          "description": "Viewport dimensions available to the UI.\n\nThe viewport has two independent dimension pairs:\n- Height: Either `height` (fixed) or `maxHeight` (flexible), never both\n- Width: Either `width` (fixed) or `maxWidth` (flexible), never both\n\nFixed dimensions (height/width): The host controls the size. Set height: 100% (recommended) or use the pixel value directly.\nFlexible dimensions (maxHeight/maxWidth or undefined): The app controls the size, up to the max if specified. If undefined, there is no limit.",
-          "allOf": [
-            {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "height": {
-                      "type": "number"
-                    }
-                  },
-                  "required": ["height"],
-                  "additionalProperties": false
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "maxHeight": {
-                      "type": "number"
-                    }
-                  },
-                  "additionalProperties": false
-                }
-              ]
+          "description": "Current and maximum dimensions available to the UI.",
+          "type": "object",
+          "properties": {
+            "width": {
+              "description": "Current viewport width in pixels.",
+              "type": "number"
             },
-            {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "width": {
-                      "type": "number"
-                    }
-                  },
-                  "required": ["width"],
-                  "additionalProperties": false
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "maxWidth": {
-                      "type": "number"
-                    }
-                  },
-                  "additionalProperties": false
-                }
-              ]
+            "height": {
+              "description": "Current viewport height in pixels.",
+              "type": "number"
+            },
+            "maxHeight": {
+              "description": "Maximum available height in pixels (if constrained).",
+              "type": "number"
+            },
+            "maxWidth": {
+              "description": "Maximum available width in pixels (if constrained).",
+              "type": "number"
             }
-          ]
+          },
+          "required": ["width", "height"],
+          "additionalProperties": false
         },
         "locale": {
           "description": "User's language and region preference in BCP 47 format.",
@@ -2468,55 +2414,28 @@
               }
             },
             "viewport": {
-              "description": "Viewport dimensions available to the UI.\n\nThe viewport has two independent dimension pairs:\n- Height: Either `height` (fixed) or `maxHeight` (flexible), never both\n- Width: Either `width` (fixed) or `maxWidth` (flexible), never both\n\nFixed dimensions (height/width): The host controls the size. Set height: 100% (recommended) or use the pixel value directly.\nFlexible dimensions (maxHeight/maxWidth or undefined): The app controls the size, up to the max if specified. If undefined, there is no limit.",
-              "allOf": [
-                {
-                  "anyOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "height": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["height"],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "maxHeight": {
-                          "type": "number"
-                        }
-                      },
-                      "additionalProperties": false
-                    }
-                  ]
+              "description": "Current and maximum dimensions available to the UI.",
+              "type": "object",
+              "properties": {
+                "width": {
+                  "description": "Current viewport width in pixels.",
+                  "type": "number"
                 },
-                {
-                  "anyOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "width": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["width"],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "maxWidth": {
-                          "type": "number"
-                        }
-                      },
-                      "additionalProperties": false
-                    }
-                  ]
+                "height": {
+                  "description": "Current viewport height in pixels.",
+                  "type": "number"
+                },
+                "maxHeight": {
+                  "description": "Maximum available height in pixels (if constrained).",
+                  "type": "number"
+                },
+                "maxWidth": {
+                  "description": "Maximum available width in pixels (if constrained).",
+                  "type": "number"
                 }
-              ]
+              },
+              "required": ["width", "height"],
+              "additionalProperties": false
             },
             "locale": {
               "description": "User's language and region preference in BCP 47 format.",

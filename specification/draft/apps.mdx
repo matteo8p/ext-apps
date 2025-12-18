@@ -461,18 +461,17 @@ interface HostContext {
   displayMode?: "inline" | "fullscreen" | "pip";
   /** Display modes the host supports */
   availableDisplayModes?: string[];
-  /**
-   * Viewport dimensions available to the UI.
-   *
-   * The viewport has two independent dimension pairs:
-   * - Height: Either `height` (fixed) or `maxHeight` (flexible), never both
-   * - Width: Either `width` (fixed) or `maxWidth` (flexible), never both
-   *
-   * Fixed dimensions (height/width): The host controls the size. Set height: 100% (recommended) or use the pixel value directly.
-   * Flexible dimensions (maxHeight/maxWidth or undefined): The app controls the size, up to the max if specified.
-   */
-  viewport?: ({ height: number } | { maxHeight?: number }) &
-    ({ width: number } | { maxWidth?: number });
+  /** Current and maximum dimensions available to the UI. */
+  viewport?: {
+    /** Current viewport width in pixels. */
+    width: number;
+    /** Current viewport height in pixels. */
+    height: number;
+    /** Maximum available height in pixels (if constrained). */
+    maxHeight?: number;
+    /** Maximum available width in pixels (if constrained). */
+    maxWidth?: number;
+  };
   /** User's language/region preference (BCP 47, e.g., "en-US") */
   locale?: string;
   /** User's timezone (IANA, e.g., "America/New_York") */

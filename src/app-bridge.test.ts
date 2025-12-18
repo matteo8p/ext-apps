@@ -113,7 +113,7 @@ describe("App <-> AppBridge integration", () => {
       const testHostContext = {
         theme: "dark" as const,
         locale: "en-US",
-        viewport: { width: 800, maxHeight: 600 },
+        viewport: { width: 800, height: 600, maxHeight: 600 },
       };
       const newBridge = new AppBridge(
         createMockClient() as Client,
@@ -337,7 +337,7 @@ describe("App <-> AppBridge integration", () => {
       const initialContext = {
         theme: "light" as const,
         locale: "en-US",
-        viewport: { width: 800, maxHeight: 600 },
+        viewport: { width: 800, height: 600, maxHeight: 600 },
       };
       const newBridge = new AppBridge(
         createMockClient() as Client,
@@ -356,7 +356,7 @@ describe("App <-> AppBridge integration", () => {
 
       // Send another partial update: only viewport changes
       newBridge.sendHostContextChange({
-        viewport: { width: 1024, maxHeight: 768 },
+        viewport: { width: 1024, height: 768, maxHeight: 768 },
       });
       await flush();
 
@@ -367,7 +367,11 @@ describe("App <-> AppBridge integration", () => {
       const context = newApp.getHostContext();
       expect(context?.theme).toBe("dark");
       expect(context?.locale).toBe("en-US");
-      expect(context?.viewport).toEqual({ width: 1024, maxHeight: 768 });
+      expect(context?.viewport).toEqual({
+        width: 1024,
+        height: 768,
+        maxHeight: 768,
+      });
 
       await newAppTransport.close();
       await newBridgeTransport.close();
