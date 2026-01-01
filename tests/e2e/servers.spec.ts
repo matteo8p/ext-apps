@@ -30,6 +30,7 @@ const SERVERS = [
   { key: "cohort-heatmap", name: "Cohort Heatmap Server" },
   { key: "customer-segmentation", name: "Customer Segmentation Server" },
   { key: "scenario-modeler", name: "SaaS Scenario Modeler" },
+  { key: "sheet-music", name: "Sheet Music Server" },
   { key: "system-monitor", name: "System Monitor Server" },
   { key: "threejs", name: "Three.js Server" },
   { key: "wiki-explorer", name: "Wiki Explorer" },
