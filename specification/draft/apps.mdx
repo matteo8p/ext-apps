@@ -1252,7 +1252,7 @@ Clients advertise MCP Apps support in the initialize request using the extension
   "params": {
     "protocolVersion": "2024-11-05",
     "capabilities": {
-      "extensions": {
+      "experimental": {
         "io.modelcontextprotocol/ui": {
           "mimeTypes": ["text/html;profile=mcp-app"]
         }
@@ -1281,7 +1281,7 @@ Servers SHOULD check client (host would-be) capabilities before registering UI-e
 
 ```typescript
 const hasUISupport =
-  clientCapabilities?.extensions?.["io.modelcontextprotocol/ui"]?.mimeTypes?.includes("text/html;profile=mcp-app");
+  clientCapabilities?.experimental?.["io.modelcontextprotocol/ui"]?.mimeTypes?.includes("text/html;profile=mcp-app");
 
 if (hasUISupport) {
   // Register tools with UI templates
